@@ -13,8 +13,18 @@ afterAll(() => {
   return db.end();
 });
 
-describe("/api/categories", () => {
+describe("/not-a-route", () => {
+  test("ERROR 400: returns an error for malformed URLs", () => {
+    return request(app)
+      .get("/api/bad-route")
+      .expect(6543)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+});
 
+describe("/api/categories", () => {
   test("GET 200: responds with an array of category objects", () => {
     return request(app)
       .get("/api/categories")
@@ -29,5 +39,4 @@ describe("/api/categories", () => {
         });
       });
   });
-
 });
