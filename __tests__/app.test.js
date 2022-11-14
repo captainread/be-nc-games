@@ -17,7 +17,7 @@ describe("/not-a-route", () => {
   test("ERROR 400: returns an error for malformed URLs", () => {
     return request(app)
       .get("/api/bad-route")
-      .expect(6543)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("400: Bad Request");
       });
