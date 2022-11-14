@@ -9,7 +9,7 @@ app.get("/api/categories/", getCategories);
 
 // catch-all error handling for bad path
 app.all("/*", (req, res, next) => {
-  res.status(400).send({ msg: "400: Bad Request" }).next(err);
+  res.status(404).send({ msg: "404: Not Found" }).next(err);
 });
 
 // dynamic error handling
