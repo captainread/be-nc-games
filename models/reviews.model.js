@@ -11,9 +11,13 @@ exports.selectReviews = () => {
 };
 
 exports.selectReviewByID = (review_id) => {
-  return db
-    .query("SELECT * FROM reviews WHERE review_id = $1", [review_id])
-    .then((result) => {
-      return result.rows[0];
-    });
+  if (isNaN(review_id)) {
+    return Promise.reject({ status: 400, msg: "400: Bad Request" });
+  } else {
+    return db
+      .query("SELECT * FROM reviews WHERE review_id = $1", [review_id])
+      .then((result) => {
+        return result.rows[0];
+      });
+  }
 };

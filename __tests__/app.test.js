@@ -99,9 +99,28 @@ describe("/api/reviews", () => {
           "votes",
         ];
         expect(body.review).toBeInstanceOf(Object);
-        console.log(body.review)
         expect(Object.keys(body.review)).toEqual(revObjKeys);
         expect(body.review).toMatchObject(revObj1);
       });
   });
+
+  test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existant ID", () => {
+    return request(app)
+      .get("/api/reviews/666")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Review ID Not Found");
+      });
+  });
+
+  test("[Ticket 5] GET REVIEW BY ID (400): error handling for invalid ID (e.g. wrong data type)", () => {
+    return request(app)
+      .get("/api/reviews/stringyboi")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+
 });
