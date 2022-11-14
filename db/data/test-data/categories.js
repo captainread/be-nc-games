@@ -1,5 +1,5 @@
 module.exports = [
-  { slug: 'euro game', description: 'Abstact games that involve little luck' },
+  { slug: 'euro game', description: 'Abstract games that involve little luck' },
   {
     slug: 'social deduction',
     description: "Players attempt to uncover each other's hidden role"
