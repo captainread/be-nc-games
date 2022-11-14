@@ -9,8 +9,6 @@ In order to run this project locally, please follow the instructions below.
 3. For development, install required packages by running:
 ```
 npm install
-npm install express
-npm install supertest --save-dev
 ```
 
 3. Create the necessary environment variable files. In the main directory, create files named:

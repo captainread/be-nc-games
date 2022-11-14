@@ -7,14 +7,13 @@ app.use(express.json());
 
 app.get("/api/categories/", getCategories);
 
-// catch-all error handling for bad path
-app.all("/*", (req, res, next) => {
-  res.status(404).send({ msg: "404: Not Found" }).next(err);
+app.use((err, req, res, next) => {
+    res.status(err.status).send({ msg: err.msg }).next(err);
 });
 
-// dynamic error handling
-app.use((err, req, res, next) => {
-  res.status(err.status).send({ msg: err.msg });
+app.all("*", (req, res) => {
+    console.log("catch all error 404 activated")
+  res.status(404).send({ msg: "404: Not Found" });
 });
 
 module.exports = app;
