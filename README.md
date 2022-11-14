@@ -1,4 +1,4 @@
-# Alice Read: NC Games API
+# NC Games API
 
 ## Local instructions
 In order to run this project locally, please follow the instructions below.
@@ -7,14 +7,14 @@ In order to run this project locally, please follow the instructions below.
 2. Navigate to / open the repo.
 
 3. For development, install required packages by running:
-```shell
+```
 npm install
 npm install express
 npm install supertest --save-dev
 ```
 
 3. Create the necessary environment variable files. In the main directory, create files named:
-```js
+```
 .env.development
 .env.test
 ```
