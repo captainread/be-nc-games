@@ -2,13 +2,15 @@ const express = require("express");
 const app = express();
 
 const { getCategories } = require("./controllers/categories.controller");
-const { getReviews } = require("./controllers/reviews.controller");
+const { getReviews, getReviewByID } = require("./controllers/reviews.controller");
 
-app.use(express.json());
+// app.use(express.json());
 
 app.get("/api/categories/", getCategories);
 
 app.get("/api/reviews", getReviews);
+
+app.get("/api/reviews/:review_id", getReviewByID);
 
 app.use((err, req, res, next) => {
   res.status(err.status).send({ msg: err.msg }).next(err);
