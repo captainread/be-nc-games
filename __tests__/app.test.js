@@ -25,11 +25,12 @@ describe("/not-a-route", () => {
 });
 
 describe("/api/categories", () => {
-  test("GET 200: responds with an array of category objects with correct properties", () => {
+  test("[Task 3] GET CATEGORIES (200): responds with an array of category objects with correct properties", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
       .then(({ body }) => {
+        expect(Array.isArray(body.category)).toEqual(true);
         expect(body.category.length).toBeGreaterThan(0);
         body.category.forEach((category) => {
           expect(category).toMatchObject({
@@ -42,11 +43,12 @@ describe("/api/categories", () => {
 });
 
 describe("/api/reviews", () => {
-  test("GET 200: responds with an array of review objects with correct properties", () => {
+  test("[Task 4] GET REVIEWS (200): responds with an array of review objects with correct properties", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
         expect(body.review.length).toBeGreaterThan(0);
         expect(body.review).toBeSortedBy("created_at", {
           descending: true,
