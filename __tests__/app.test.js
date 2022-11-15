@@ -13,8 +13,8 @@ afterAll(() => {
   return db.end();
 });
 
-describe("/not-a-route", () => {
-  test("ERROR 404: returns an error for malformed URLs", () => {
+describe("ERROR DUE TO /invalid-route", () => {
+  test("[Various] ERROR 404: returns an error for malformed URLs", () => {
     return request(app)
       .get("/bad-route")
       .expect(404)
@@ -24,7 +24,7 @@ describe("/not-a-route", () => {
   });
 });
 
-describe("/api/categories", () => {
+describe("GET CATEGORIES FROM /api/categories", () => {
   test("[Ticket 3] GET CATEGORIES (200): responds with an array of category objects with correct properties", () => {
     return request(app)
       .get("/api/categories")
@@ -42,7 +42,7 @@ describe("/api/categories", () => {
   });
 });
 
-describe("/api/reviews", () => {
+describe("GET REVIEWS FROM /api/reviews", () => {
   test("[Ticket 4] GET REVIEWS (200): responds with an array of review objects with correct properties", () => {
     return request(app)
       .get("/api/reviews")
@@ -71,7 +71,7 @@ describe("/api/reviews", () => {
   });
 });
 
-describe("/api/reviews/:id", () => {
+describe("GET REVIEW FROM /api/reviews/:id", () => {
   test("[Ticket 5] GET REVIEW BY ID (200): responds with one matched review object with correct properties", () => {
     return request(app)
       .get("/api/reviews/1")
@@ -124,7 +124,7 @@ describe("/api/reviews/:id", () => {
   });
 });
 
-describe("/api/reviews/:review_id/comments", () => {
+describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
   test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sorted by created_at date.", () => {
     return request(app)
       .get("/api/reviews/3/comments")
@@ -200,6 +200,102 @@ describe("/api/reviews/:review_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+});
+
+describe("POST TO /api/reviews/:review_id/comments", () => {
+  test("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
+    const testComment = {
+      username: "philippaclaire9",
+      body: "Wow, what an excellent coding test!",
+    };
+
+    const testResult = {
+      comment_id: expect.any(Number),
+      body: "Wow, what an excellent coding test!",
+      review_id: expect.any(Number),
+      author: "philippaclaire9",
+      votes: 0,
+      created_at: expect.any(String),
+    };
+
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.postedComment).toMatchObject(testResult);
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data, e.g. missing fields", () => {
+    const noBodyComment = {
+      username: "philippaclaire9",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(noBodyComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data, e.g. empty strings", () => {
+    const emptyStrComment = {
+      username: "philippaclaire9",
+      body: "",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(emptyStrComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with invalid review_ID, e.g. wrong data type", () => {
+    const emptyStrComment = {
+      username: "philippaclaire9",
+      body: "A perfectly cromulent comment...",
+    };
+    return request(app)
+      .post("/api/reviews/...butACrappyId/comments")
+      .send(emptyStrComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (404): error handling for attempted comment for non-existent review_id", () => {
+    const testComment666 = {
+      username: "philippaclaire9",
+      body: "I'm failing to comment on the Devil's Game!",
+    };
+    return request(app)
+      .post("/api/reviews/666/comments")
+      .send(testComment666)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (404): error handling for attempted comment by non-existent user", () => {
+    const testCommentGhost = {
+      username: "captainread",
+      body: "Gee, I don't even have an account here...",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(testCommentGhost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
       });
   });
 });
