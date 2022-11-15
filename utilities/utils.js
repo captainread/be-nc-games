@@ -14,9 +14,3 @@ exports.checkExists = (table, column, value) => {
     }
   });
 };
-
-exports.checkValidIDType = (id) => {
-  if (isNaN(id)) {
-    return Promise.reject({ status: 400, msg: "400: Bad Request" });
-  } 
-};

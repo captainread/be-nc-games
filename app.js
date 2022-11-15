@@ -16,11 +16,10 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewByID);
 
-app.get("/api/reviews/:id/comments", getCommentsByReviewID);
+app.get("/api/reviews/:review_id/comments", getCommentsByReviewID);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
-    console.log(err.msg)
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
