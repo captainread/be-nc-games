@@ -106,7 +106,7 @@ describe("/api/reviews/:id", () => {
       });
   });
 
-  test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existant ID", () => {
+  test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existent ID", () => {
     return request(app)
       .get("/api/reviews/666")
       .expect(404)
@@ -117,7 +117,7 @@ describe("/api/reviews/:id", () => {
 
   test("[Ticket 5] GET REVIEW BY ID (400): error handling for invalid ID (e.g. wrong data type)", () => {
     return request(app)
-      .get("/api/reviews/stringyboi")
+      .get("/api/reviews/stringyID")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("400: Bad Request");
@@ -126,7 +126,7 @@ describe("/api/reviews/:id", () => {
 });
 
 describe.only("/api/reviews/:review_id/comments", () => {
-  test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sortred by created_at date.", () => {
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sorted by created_at date.", () => {
     return request(app)
       .get("/api/reviews/3/comments")
       .expect(200)
@@ -169,11 +169,38 @@ describe.only("/api/reviews/:review_id/comments", () => {
         body.review.forEach((comment) => {
           expect(Object.keys(comment)).toEqual(commentObjKeys);
         });
-        console.log(body.review);
         expect(body.review).toBeSortedBy("created_at", {
           descending: true,
         });
         expect(body.review).toMatchObject(commentsForRev3);
+      });
+  });
+
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an empty array where review_id is valid, but no comments have been written.", () => {
+    return request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
+        expect(body.review).toMatchObject([]);
+      });
+  });
+
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (404): error handling for non-existent ID", () => {
+    return request(app)
+      .get("/api/reviews/666/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Review ID Not Found");
+      });
+  });
+
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (400): error handling for invalid ID (e.g. wrong data type)", () => {
+    return request(app)
+      .get("/api/reviews/stringyID/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
       });
   });
 });

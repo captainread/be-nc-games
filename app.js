@@ -20,6 +20,7 @@ app.get("/api/reviews/:id/comments", getCommentsByReviewID);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
+    console.log(err.msg)
     res.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
@@ -27,6 +28,7 @@ app.use((err, req, res, next) => {
 });
 
 app.all("*", (req, res) => {
+  console.log(err.msg)
   res.status(404).send({ msg: "404: Not Found" });
 });
 
