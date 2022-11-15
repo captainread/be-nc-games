@@ -202,4 +202,34 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("400: Bad Request");
       });
   });
+
+  test.only("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
+    const testComment = {
+      username: "philippaclaire9",
+      body: "Wow, what an excellent coding test!",
+    };
+
+    const testResult = {
+      comment_id: 7,
+      body: "Wow, what an excellent coding test!",
+      review_id: 4,
+      author: "philippaclaire9",
+      votes: 0,
+      created_at: expect.any(String),
+    };
+
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.postedComment).toMatchObject(testResult);
+      });
+  });
+
+  // test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data", () => {});
 });
+
+// describe("/api/reviews/:review_id/comments", () => {
+//   test("", () => {});
+// });
