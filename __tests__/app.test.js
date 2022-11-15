@@ -203,7 +203,7 @@ describe("/api/reviews/:review_id/comments", () => {
       });
   });
 
-  test.only("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
+  test("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
     const testComment = {
       username: "philippaclaire9",
       body: "Wow, what an excellent coding test!",
@@ -227,9 +227,59 @@ describe("/api/reviews/:review_id/comments", () => {
       });
   });
 
-  // test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data", () => {});
-});
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data, e.g. missing fields", () => {
+    const noBodyComment = {
+      username: "philippaclaire9",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(noBodyComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
 
-// describe("/api/reviews/:review_id/comments", () => {
-//   test("", () => {});
-// });
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with insufficient data, e.g. empty strings", () => {
+    const emptyStrComment = {
+      username: "philippaclaire9",
+      body: "",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(emptyStrComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (404): error handling for attempted comment for non-existent review_id", () => {
+    const testComment666 = {
+      username: "philippaclaire9",
+      body: "I'm failing to comment on the Devil's Game!",
+    };
+    return request(app)
+      .post("/api/reviews/666/comments")
+      .send(testComment666)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+
+  test("[Ticket 7] POST COMMENT (404): error handling for attempted comment by non-existent user", () => {
+    const testCommentGhost = {
+      username: "captainread",
+      body: "Gee, I don't even have an account here...",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(testCommentGhost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+
+});
