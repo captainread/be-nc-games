@@ -111,7 +111,7 @@ describe("/api/reviews/:id", () => {
       .get("/api/reviews/666")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("404: Review ID Not Found");
+        expect(body.msg).toBe("404: Not Found");
       });
   });
 
@@ -125,7 +125,8 @@ describe("/api/reviews/:id", () => {
   });
 });
 
-describe.only("/api/reviews/:review_id/comments", () => {
+describe("/api/reviews/:review_id/comments", () => {
+  
   test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sorted by created_at date.", () => {
     return request(app)
       .get("/api/reviews/3/comments")
@@ -191,7 +192,7 @@ describe.only("/api/reviews/:review_id/comments", () => {
       .get("/api/reviews/666/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("404: Review ID Not Found");
+        expect(body.msg).toBe("404: Not Found");
       });
   });
 

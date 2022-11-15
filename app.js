@@ -28,7 +28,6 @@ app.use((err, req, res, next) => {
 });
 
 app.all("*", (req, res) => {
-  console.log(err.msg)
   res.status(404).send({ msg: "404: Not Found" });
 });
 
