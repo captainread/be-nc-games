@@ -69,7 +69,9 @@ describe("/api/reviews", () => {
         });
       });
   });
+});
 
+describe("/api/reviews/:id", () => {
   test("[Ticket 5] GET REVIEW BY ID (200): responds with one matched review object with correct properties", () => {
     return request(app)
       .get("/api/reviews/1")
@@ -121,6 +123,57 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("400: Bad Request");
       });
   });
+});
 
-
+describe.only("/api/reviews/:review_id/comments", () => {
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sortred by created_at date.", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsForRev3 = [
+          {
+            comment_id: 6,
+            body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
+            review_id: 3,
+            author: "philippaclaire9",
+            votes: 10,
+            created_at: "2021-03-27T19:49:48.110Z",
+          },
+          {
+            comment_id: 3,
+            body: "I didn't know dogs could play games",
+            review_id: 3,
+            author: "philippaclaire9",
+            votes: 10,
+            created_at: "2021-01-18T10:09:48.110Z",
+          },
+          {
+            comment_id: 2,
+            body: "My dog loved this game too!",
+            review_id: 3,
+            author: "mallionaire",
+            votes: 13,
+            created_at: "2021-01-18T10:09:05.410Z",
+          },
+        ];
+        const commentObjKeys = [
+          "comment_id",
+          "body",
+          "review_id",
+          "author",
+          "votes",
+          "created_at",
+        ];
+        expect(Array.isArray(body.review)).toEqual(true);
+        body.review.forEach((comment) => {
+          expect(Object.keys(comment)).toEqual(commentObjKeys);
+        });
+        console.log(body.review);
+        expect(body.review).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        expect(body.review).toMatchObject(commentsForRev3);
+      });
+  });
 });
