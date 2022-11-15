@@ -13,8 +13,8 @@ afterAll(() => {
   return db.end();
 });
 
-describe("/not-a-route", () => {
-  test("ERROR 404: returns an error for malformed URLs", () => {
+describe("ERROR DUE TO /invalid-route", () => {
+  test("[Various] ERROR 404: returns an error for malformed URLs", () => {
     return request(app)
       .get("/bad-route")
       .expect(404)
@@ -24,7 +24,7 @@ describe("/not-a-route", () => {
   });
 });
 
-describe("/api/categories", () => {
+describe("GET CATEGORIES FROM /api/categories", () => {
   test("[Ticket 3] GET CATEGORIES (200): responds with an array of category objects with correct properties", () => {
     return request(app)
       .get("/api/categories")
@@ -42,7 +42,7 @@ describe("/api/categories", () => {
   });
 });
 
-describe("/api/reviews", () => {
+describe("GET REVIEWS FROM /api/reviews", () => {
   test("[Ticket 4] GET REVIEWS (200): responds with an array of review objects with correct properties", () => {
     return request(app)
       .get("/api/reviews")
@@ -71,7 +71,7 @@ describe("/api/reviews", () => {
   });
 });
 
-describe("/api/reviews/:id", () => {
+describe("GET REVIEW FROM /api/reviews/:id", () => {
   test("[Ticket 5] GET REVIEW BY ID (200): responds with one matched review object with correct properties", () => {
     return request(app)
       .get("/api/reviews/1")
@@ -124,7 +124,7 @@ describe("/api/reviews/:id", () => {
   });
 });
 
-describe("/api/reviews/:review_id/comments", () => {
+describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
   test("[Ticket 6] GET COMMENTS BY REVIEW ID (200): responds with an array of comments (each with correct properties) for the given review_id. Comments are sorted by created_at date.", () => {
     return request(app)
       .get("/api/reviews/3/comments")
@@ -203,6 +203,9 @@ describe("/api/reviews/:review_id/comments", () => {
       });
   });
 
+});
+
+describe("POST TO /api/reviews/:review_id/comments", () => {
   test("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
     const testComment = {
       username: "philippaclaire9",
@@ -210,9 +213,9 @@ describe("/api/reviews/:review_id/comments", () => {
     };
 
     const testResult = {
-      comment_id: 7,
+      comment_id: expect.any(Number),
       body: "Wow, what an excellent coding test!",
-      review_id: 4,
+      review_id: expect.any(Number),
       author: "philippaclaire9",
       votes: 0,
       created_at: expect.any(String),
@@ -254,6 +257,20 @@ describe("/api/reviews/:review_id/comments", () => {
       });
   });
 
+  test("[Ticket 7] POST COMMENT (400): error handling for attempted comment with invalid review_ID, e.g. wrong data type", () => {
+    const emptyStrComment = {
+      username: "philippaclaire9",
+      body: "A perfectly cromulent comment...",
+    };
+    return request(app)
+      .post("/api/reviews/...butACrappyId/comments")
+      .send(emptyStrComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
   test("[Ticket 7] POST COMMENT (404): error handling for attempted comment for non-existent review_id", () => {
     const testComment666 = {
       username: "philippaclaire9",
@@ -281,5 +298,4 @@ describe("/api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("404: Not Found");
       });
   });
-
 });

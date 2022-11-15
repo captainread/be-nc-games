@@ -32,8 +32,8 @@ exports.getCommentsByReviewID = (req, res, next) => {
 };
 
 exports.postComment = (req, res, next) => {
-  review_id = req.params.review_id;
-  newComment = req.body;
+  const review_id = req.params.review_id;
+  const newComment = req.body;
 
   insertComment(review_id, newComment)
     .then((postedComment) => {

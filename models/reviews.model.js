@@ -48,17 +48,19 @@ exports.insertComment = (review_id, newComment) => {
   if (
     !Object.keys(newComment).includes("username", "body") ||
     !newComment.body ||
-    !newComment.username
+    !newComment.username ||
+    isNaN(review_id)
   ) {
     return Promise.reject({ status: 400, msg: "400: Bad Request" });
   } else {
-    return checkExists("reviews", "review_id", review_id).then(() => {
-      return checkExists("users", "username", newComment.username).then(() => {
-        let queryStr = `INSERT INTO comments (review_id, author, body) VALUES ($1, $2, $3) RETURNING *;`;
-        const queryVals = [review_id, newComment.username, newComment.body];
-        return db.query(queryStr, queryVals).then((result) => {
-          return result.rows[0];
-        });
+    return Promise.all([
+      checkExists("reviews", "review_id", review_id),
+      checkExists("users", "username", newComment.username),
+    ]).then(() => {
+      let queryStr = `INSERT INTO comments (review_id, author, body) VALUES ($1, $2, $3) RETURNING *;`;
+      const queryVals = [review_id, newComment.username, newComment.body];
+      return db.query(queryStr, queryVals).then((result) => {
+        return result.rows[0];
       });
     });
   }
