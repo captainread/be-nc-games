@@ -319,8 +319,8 @@ describe("PATCH VOTES AT /api/reviews/:review_id", () => {
       .send({ inc_votes: 10 })
       .expect(200)
       .then(({ body }) => {
-        expect(body.updatedReview.votes).toBe(17);
-        expect(body.updatedReview).toMatchObject(patchedReview4);
+        expect(body.review.votes).toBe(17);
+        expect(body.review).toMatchObject(patchedReview4);
       });
   });
 
@@ -343,8 +343,8 @@ describe("PATCH VOTES AT /api/reviews/:review_id", () => {
       .send({ inc_votes: -7 })
       .expect(200)
       .then(({ body }) => {
-        expect(body.updatedReview.votes).toBe(0);
-        expect(body.updatedReview).toMatchObject(patchedReview4);
+        expect(body.review.votes).toBe(0);
+        expect(body.review).toMatchObject(patchedReview4);
       });
   });
 
