@@ -1,4 +1,3 @@
-const { patch } = require("../app");
 const {
   selectReviews,
   selectReviewByID,
