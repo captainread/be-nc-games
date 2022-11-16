@@ -1,8 +1,10 @@
+const { patch } = require("../app");
 const {
   selectReviews,
   selectReviewByID,
   selectCommentsByReviewID,
   insertComment,
+  updateReviewVotes,
 } = require("../models/reviews.model");
 
 exports.getReviews = (req, res, next) => {
@@ -38,6 +40,17 @@ exports.postComment = (req, res, next) => {
   insertComment(review_id, newComment)
     .then((postedComment) => {
       res.status(201).send({ postedComment });
+    })
+    .catch(next);
+};
+
+exports.patchReviewVotes = (req, res, next) => {
+  const review_id = req.params.review_id;
+  const patchContent = req.body;
+
+  updateReviewVotes(review_id, patchContent)
+    .then((review) => {
+      res.status(200).send({ review });
     })
     .catch(next);
 };
