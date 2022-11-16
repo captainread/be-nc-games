@@ -65,3 +65,24 @@ exports.insertComment = (review_id, newComment) => {
     });
   }
 };
+
+exports.updateReviewVotes = (review_id, patchContent) => {
+  if (!patchContent ||
+    !Object.keys(patchContent).includes("inc_votes") ||
+    Object.keys(patchContent).length > 1 ||
+    isNaN(review_id) ||
+    typeof patchContent.inc_votes != "number"
+  ) {
+    return Promise.reject({ status: 400, msg: "400: Bad Request" });
+  } else {
+    return checkExists("reviews", "review_id", review_id).then(() => {
+      let queryStr =
+        "UPDATE reviews SET votes = votes + $2 WHERE review_id = $1 RETURNING *;";
+      const queryVals = [review_id, patchContent.inc_votes];
+
+      return db.query(queryStr, queryVals).then((result) => {
+        return result.rows[0];
+      });
+    });
+  }
+};

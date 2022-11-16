@@ -105,7 +105,7 @@ describe("GET REVIEW FROM /api/reviews/:id", () => {
       });
   });
 
-  test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existent ID", () => {
+  test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existent review_ID", () => {
     return request(app)
       .get("/api/reviews/666")
       .expect(404)
@@ -114,7 +114,7 @@ describe("GET REVIEW FROM /api/reviews/:id", () => {
       });
   });
 
-  test("[Ticket 5] GET REVIEW BY ID (400): error handling for invalid ID (e.g. wrong data type)", () => {
+  test("[Ticket 5] GET REVIEW BY ID (400): error handling for invalid review_ID (e.g. wrong data type)", () => {
     return request(app)
       .get("/api/reviews/stringyID")
       .expect(400)
@@ -185,7 +185,7 @@ describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
       });
   });
 
-  test("[Ticket 6] GET COMMENTS BY REVIEW ID (404): error handling for non-existent ID", () => {
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (404): error handling for non-existent review_ID", () => {
     return request(app)
       .get("/api/reviews/666/comments")
       .expect(404)
@@ -194,7 +194,7 @@ describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
       });
   });
 
-  test("[Ticket 6] GET COMMENTS BY REVIEW ID (400): error handling for invalid ID (e.g. wrong data type)", () => {
+  test("[Ticket 6] GET COMMENTS BY REVIEW ID (400): error handling for invalid review_ID (e.g. wrong data type)", () => {
     return request(app)
       .get("/api/reviews/stringyID/comments")
       .expect(400)
@@ -202,7 +202,6 @@ describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
         expect(body.msg).toBe("400: Bad Request");
       });
   });
-
 });
 
 describe("POST TO /api/reviews/:review_id/comments", () => {
@@ -293,6 +292,110 @@ describe("POST TO /api/reviews/:review_id/comments", () => {
     return request(app)
       .post("/api/reviews/4/comments")
       .send(testCommentGhost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+});
+
+describe("PATCH VOTES AT /api/reviews/:review_id", () => {
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (200): *increases* the vote count for a valid review (when request includes inc_votes) and returns the updated review.", () => {
+    const patchedReview4 = {
+      review_id: expect.any(Number),
+      title: "Dolor reprehenderit",
+      category: "social deduction",
+      designer: "Gamey McGameface",
+      owner: "mallionaire",
+      review_body:
+        "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+      review_img_url:
+        "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+      created_at: expect.any(String),
+      votes: 17,
+    };
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedReview.votes).toBe(17);
+        expect(body.updatedReview).toMatchObject(patchedReview4);
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (200): *decreases* the vote count for a valid review (when request includes inc_votes) and returns the updated review", () => {
+    const patchedReview4 = {
+      review_id: expect.any(Number),
+      title: "Dolor reprehenderit",
+      category: "social deduction",
+      designer: "Gamey McGameface",
+      owner: "mallionaire",
+      review_body:
+        "Consequat velit occaecat voluptate do. Dolor pariatur fugiat sint et proident ex do consequat est. Nisi minim laboris mollit cupidatat et adipisicing laborum do. Sint sit tempor officia pariatur duis ullamco labore ipsum nisi voluptate nulla eu veniam. Et do ad id dolore id cillum non non culpa. Cillum mollit dolor dolore excepteur aliquip. Cillum aliquip quis aute enim anim ex laborum officia. Aliqua magna elit reprehenderit Lorem elit non laboris irure qui aliquip ad proident. Qui enim mollit Lorem labore eiusmod",
+      review_img_url:
+        "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+      created_at: expect.any(String),
+      votes: 0,
+    };
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({ inc_votes: -7 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedReview.votes).toBe(0);
+        expect(body.updatedReview).toMatchObject(patchedReview4);
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (400): error handling for attempted vote patch with insufficient data, e.g. empty object/no inc_votes", () => {
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (400): error handling for attempted vote patch with invalid data, e.g. invalid inc_votes value", () => {
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({ inc_votes: "ten cheeky little votes!" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (400): error handling for attempted vote patch with invalid data, e.g. unecessary fields", () => {
+    return request(app)
+      .patch("/api/reviews/4")
+      .send({
+        inc_votes: 10,
+        otherNonsense: "wots this doin here?",
+        badStuff: true,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (400): error handling for attempted vote patch with invalid review_ID, e.g. wrong data type", () => {
+    return request(app)
+      .patch("/api/reviews/ACrappyId")
+      .send({ inc_votes: 10 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR REVIEW (404): error handling for attempted vote patch for non-existent review_id", () => {
+    return request(app)
+      .patch("/api/reviews/666")
+      .send({ inc_votes: 10 })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("404: Not Found");
