@@ -37,8 +37,8 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.use("/*", (req, res) => {
-  res.status(404).send({ msg: "This error!" });
+app.all("/api/*", (req, res) => {
+  res.status(404).send({ msg: "404: Not Found" });
 });
 
 module.exports = app;
