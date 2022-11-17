@@ -562,7 +562,6 @@ describe("GET USERS FROM /api/users", () => {
 });
 
 describe("DELETE COMMENT AT /api/comments/:comment_id", () => {
-  
   test("[Ticket 12] DELETE COMMENT (200): removes comment matching given comment_id, and returns no content.", () => {
     return request(app)
       .del("/api/comments/1")
@@ -587,6 +586,29 @@ describe("DELETE COMMENT AT /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("404: Not Found");
+      });
+  });
+});
+
+describe("GET ENDPOINTS JSON AT /api", () => {
+  test("[Ticket 13] GET API ENDPOINTS (200): responds with JSON describing available endpoints", () => {
+    const JSONkeys = [
+      "GET /api",
+      "GET /api/categories",
+      "GET /api/reviews",
+      "GET /api/reviews/:review_id",
+      "GET /api/reviews/:review_id/comments",
+      "GET /api/users",
+      "POST /api/reviews/:review_id/comments",
+      "PATCH /api/reviews/:review_id",
+      "DELETE /api/comments/:comment_id",
+    ];
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeInstanceOf(Object);
+        expect(Object.keys(body)).toEqual(JSONkeys);
       });
   });
 });

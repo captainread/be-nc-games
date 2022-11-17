@@ -13,9 +13,11 @@ const {
   deleteComment,
 } = require("./controllers/comments.controller");
 const { getUsers } = require("./controllers/users.controller");
+const { getEndpoints } = require("./controllers/endpoints.controller");
 
 app.use(express.json());
 
+app.get("/api", getEndpoints);
 app.get("/api/categories", getCategories);
 app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id", getReviewByID);
