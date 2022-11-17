@@ -1,11 +1,54 @@
 const db = require("../db/connection");
 const { checkExists } = require("../utilities/utils");
 
-exports.selectReviews = () => {
+exports.selectAllReviews = (
+  category,
+  sort_by = "created_at",
+  order = "desc"
+) => {
+  const sortList = [
+    "title",
+    "designer",
+    "owner",
+    "review_id",
+    "category",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+
+  const orderList = ["ASC", "asc", "DESC", "desc"];
+
+  if (!sortList.includes(sort_by) || !orderList.includes(order)) {
+    return Promise.reject({ status: 400, msg: "400: Bad Request" });
+  }
+
+  let queryStr =
+    "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id";
+
+  const queryVals = [];
+
+  if (category) {
+    queryVals.push(category);
+    queryStr += " WHERE category = $1";
+  }
+
+  queryStr += ` ORDER BY ${sort_by}`;
+  queryStr += ` ${order}`;
+
   return db
-    .query(
-      "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id ORDER BY reviews.created_at DESC"
-    )
+    .query(`SELECT * FROM categories`)
+    .then((result) => {
+      if (
+        !result.rows.map((cat) => cat.slug).includes(category) &&
+        category !== undefined
+      ) {
+        return Promise.reject({ status: 404, msg: "404: Category Not Found" });
+      }
+    })
+    .then(() => {
+      return db.query(queryStr, queryVals);
+    })
     .then((result) => {
       return result.rows;
     });

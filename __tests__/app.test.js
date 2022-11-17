@@ -42,8 +42,8 @@ describe("GET CATEGORIES FROM /api/categories", () => {
   });
 });
 
-describe("GET REVIEWS FROM /api/reviews", () => {
-  test("[Ticket 4] GET REVIEWS (200): responds with an array of review objects with correct properties", () => {
+describe("GET ALL REVIEWS FROM /api/reviews", () => {
+  test("[Ticket 4] GET REVIEWS (200): responds with an array of review objects with correct properties. All reviews are returned when no category filtering is requested. Sort order defaults to DESC.", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -67,6 +67,86 @@ describe("GET REVIEWS FROM /api/reviews", () => {
         body.review.forEach((review) => {
           expect(review).toMatchObject(revObj);
         });
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (200): array of review objects includes optional category filtering", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
+        expect(body.review.length).toBeGreaterThan(0);
+        expect(body.review.length).toBe(3);
+        body.review.forEach((review) => {
+          expect(review.category).toEqual("dexterity");
+        });
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (200): array of review objects includes optional sorting (order defaults to DESC)", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=owner")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
+        expect(body.review.length).toBeGreaterThan(0);
+        expect(body.review).toBeSortedBy("owner", {
+          descending: true,
+        });
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (200): array of review objects includes optional sorting where order can be set to ASC", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
+        expect(body.review.length).toBeGreaterThan(0);
+        expect(body.review).toBeSortedBy("votes", {
+          descending: false,
+        });
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (200): category filtering and column sorting/ordering can be dynamically combined", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity&sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.review)).toEqual(true);
+        expect(body.review.length).toBe(3);
+        expect(body.review).toBeSortedBy("comment_count", {
+          descending: false,
+        });
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (400): error handling for attempted GET with invalid sort_by", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=[4321]")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (400): error handling for attempted GET with invalid order", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=votes&order=333-UP-YOU-GO")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 11] GET REVIEWS (404): error handling for attempted GET with non-existent category (and can dynamically handle additions to categories)", () => {
+    return request(app)
+      .get("/api/reviews?category={432}")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Category Not Found");
       });
   });
 });

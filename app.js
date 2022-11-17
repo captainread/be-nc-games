@@ -3,7 +3,7 @@ const app = express();
 
 const { getCategories } = require("./controllers/categories.controller");
 const {
-  getReviews,
+  getAllReviews,
   getReviewByID,
   getCommentsByReviewID,
   postComment,
@@ -14,7 +14,7 @@ const { getUsers } = require("./controllers/users.controller");
 app.use(express.json());
 
 app.get("/api/categories/", getCategories);
-app.get("/api/reviews", getReviews);
+app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id", getReviewByID);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewID);
 app.get("/api/users", getUsers);
