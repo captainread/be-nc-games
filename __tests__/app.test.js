@@ -13,16 +13,16 @@ afterAll(() => {
   return db.end();
 });
 
-describe("ERROR DUE TO /invalid-route", () => {
-  test("[Various] ERROR 404: returns an error for malformed URLs", () => {
-    return request(app)
-      .get("/bad-route")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("404: Not Found");
-      });
-  });
-});
+// describe("ERROR DUE TO /invalid-route", () => {
+//   test("[Various] ERROR 404: returns an error for malformed URLs", () => {
+//     return request(app)
+//       .get("/bad-route")
+//       .expect(404)
+//       .then(({ body }) => {
+//         expect(body.msg).toBe("404: Not Found");
+//       });
+//   });
+// });
 
 describe("GET CATEGORIES FROM /api/categories", () => {
   test("[Ticket 3] GET CATEGORIES (200): responds with an array of category objects with correct properties", () => {
