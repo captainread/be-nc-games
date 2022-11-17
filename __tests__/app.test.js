@@ -560,3 +560,33 @@ describe("GET USERS FROM /api/users", () => {
       });
   });
 });
+
+describe("DELETE COMMENT AT /api/comments/:comment_id", () => {
+  
+  test("[Ticket 12] DELETE COMMENT (200): removes comment matching given comment_id, and returns no content.", () => {
+    return request(app)
+      .del("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app).get("/api/comments/1").expect(404);
+      });
+  });
+
+  test("[Ticket 12] DELETE COMMENT (400): error handling for attempted delete of invalid comment_id, e.g. wrong data type", () => {
+    return request(app)
+      .del("/api/comments/stringyBadStuff123")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 12] DELETE COMMENT (404): error handling for attempted delete of non-existent comment_id", () => {
+    return request(app)
+      .del("/api/comments/666")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+});
