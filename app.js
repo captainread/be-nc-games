@@ -5,15 +5,18 @@ const { getCategories } = require("./controllers/categories.controller");
 const {
   getAllReviews,
   getReviewByID,
-  getCommentsByReviewID,
-  postComment,
   patchReviewVotes,
 } = require("./controllers/reviews.controller");
+const {
+  getCommentsByReviewID,
+  postComment,
+  deleteComment,
+} = require("./controllers/comments.controller");
 const { getUsers } = require("./controllers/users.controller");
 
 app.use(express.json());
 
-app.get("/api/categories/", getCategories);
+app.get("/api/categories", getCategories);
 app.get("/api/reviews", getAllReviews);
 app.get("/api/reviews/:review_id", getReviewByID);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewID);
@@ -22,6 +25,8 @@ app.get("/api/users", getUsers);
 app.post("/api/reviews/:review_id/comments", postComment);
 
 app.patch("/api/reviews/:review_id", patchReviewVotes);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
