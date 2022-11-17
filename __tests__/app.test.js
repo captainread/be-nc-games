@@ -16,10 +16,12 @@ afterAll(() => {
 describe("ERROR DUE TO /invalid-route", () => {
   test("[Various] ERROR 404: returns an error for malformed URLs", () => {
     return request(app)
-      .get("/api/bad-route")
+      .get("/bad-route")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("404: Not Found");
+        expect(body.msg).toBe(
+          "404: Not Found. Please ensure you are interacting with a valid endpoint."
+        );
       });
   });
 });

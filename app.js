@@ -37,8 +37,8 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.all("/api/*", (req, res) => {
-  res.status(404).send({ msg: "404: Not Found" });
+app.all("*", (req, res) => {
+  res.status(404).send({ msg: "404: Not Found. Please ensure you are interacting with a valid endpoint." });
 });
 
 module.exports = app;
