@@ -1,6 +1,5 @@
-const { selectAllEndpoints } = require("../models/endpoints.model");
+const endpoints = require("../endpoints.json");
 
 exports.getEndpoints = (req, res, next) => {
-  const file = selectAllEndpoints();
-  res.status(200).send(file);
+  res.status(200).send(endpoints).catch(next);
 };
