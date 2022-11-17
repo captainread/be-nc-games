@@ -9,7 +9,7 @@ The underlying database (themed around board game reviews) is made using **PSQL*
 
 To view the live version, please visit:
 
-> link goes here
+> https://captainread-nc-games.cyclic.app/
 
 ---
 
