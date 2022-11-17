@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.all("/*", (req, res) => {
+app.use("/*", (req, res) => {
   res.status(404).send({ msg: "404: Not Found" });
 });
 
