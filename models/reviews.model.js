@@ -17,9 +17,9 @@ exports.selectReviewByID = (review_id) => {
   } else {
     return checkExists("reviews", "review_id", review_id)
       .then(() => {
-        return db.query("SELECT * FROM reviews WHERE review_id = $1", [
-          review_id,
-        ]);
+        let queryStr =
+          "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments LEFT JOIN reviews ON reviews.review_id = comments.review_id WHERE comments.review_id = $1) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE reviews.review_id = $1";
+        return db.query(queryStr, [review_id]);
       })
       .then((result) => {
         return result.rows[0];
@@ -67,7 +67,8 @@ exports.insertComment = (review_id, newComment) => {
 };
 
 exports.updateReviewVotes = (review_id, patchContent) => {
-  if (!patchContent ||
+  if (
+    !patchContent ||
     !Object.keys(patchContent).includes("inc_votes") ||
     Object.keys(patchContent).length > 1 ||
     isNaN(review_id) ||

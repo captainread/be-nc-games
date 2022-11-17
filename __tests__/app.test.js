@@ -105,6 +105,65 @@ describe("GET REVIEW FROM /api/reviews/:id", () => {
       });
   });
 
+  test("[Ticket 10] GET REVIEW BY ID (200): response object also includes a comment count property", () => {
+    const revObj = {
+      review_id: expect.any(Number),
+      title: expect.any(String),
+      category: expect.any(String),
+      designer: expect.any(String),
+      owner: expect.any(String),
+      review_img_url: expect.any(String),
+      created_at: expect.any(String),
+      votes: expect.any(Number),
+      comment_count: expect.any(Number),
+    };
+    const revObj3 = {
+      review_id: 3,
+      title: "Ultimate Werewolf",
+      category: "social deduction",
+      designer: "Akihisa Okui",
+      owner: "bainesface",
+      review_body: "We couldn't find the werewolf!",
+      review_img_url:
+        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+      created_at: "2021-01-18T10:01:41.251Z",
+      votes: 5,
+      comment_count: 3,
+    };
+    return request(app)
+      .get("/api/reviews/3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toBeInstanceOf(Object);
+        expect(body.review).toMatchObject(revObj);
+        expect(body.review).toMatchObject(revObj3);
+        expect(body.review.comment_count).toBe(3);
+        expect(body.review.comment_count).not.toBe(6);
+      });
+  });
+
+  test("[Ticket 10] GET REVIEW BY ID (200): comment count property exists set to zero when there are no comments for that review", () => {
+    const revObj = {
+      review_id: expect.any(Number),
+      title: expect.any(String),
+      category: expect.any(String),
+      designer: expect.any(String),
+      owner: expect.any(String),
+      review_img_url: expect.any(String),
+      created_at: expect.any(String),
+      votes: expect.any(Number),
+      comment_count: expect.any(Number),
+    };
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toBeInstanceOf(Object);
+        expect(body.review).toMatchObject(revObj);
+        expect(body.review.comment_count).toBe(0);
+      });
+  });
+
   test("[Ticket 5] GET REVIEW BY ID (404): error handling for non-existent review_ID", () => {
     return request(app)
       .get("/api/reviews/666")
