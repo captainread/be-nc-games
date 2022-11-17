@@ -2,23 +2,31 @@
 
 ## Project summary
 
-- This project mimics the structure of a real-world backend service which provides information to frontend architecture.
+This project mimics the structure of a real-world backend service which provides information to frontend architecture.
+The underlying database (themed around board game reviews) is made using **PSQL** and interacted with via **node-postgres**.
 
-- The underlying database (themed around board game reviews) is made using **PSQL** and interacted with via **node-postgres**.
+### Hosted API
 
----------------
+To view the live version, please visit:
 
-## Requirements
+> link goes here
+
+---
+
+## Local instructions
+
+### Requirements
+
 Minimum versions of `Node.js` and `Postgres` needed to run the project:
+
 - **node.js**: v18.10.0
 - **Postgres**: v14.5
 
----------------
+### Set-up
 
-## Local instructions
 In order to run this project locally, please follow the instructions below.
 
-1. Clone the repository from github
+1. Clone the repository from GitHub:
 
 ```shell
 $ git clone https://github.com/captainread/nc-games.git
@@ -26,33 +34,44 @@ $ git clone https://github.com/captainread/nc-games.git
 
 2. Navigate to / open the repo.
 
-3. For development, install required packages by running:
+3. To install dependencies, run this command:
+
 ```shell
 $ npm install
 ```
 
 4. Create the necessary environment variable files. In the main directory, create files named:
+
 ```
 .env.development
 .env.test
 ```
 
-5. Add these lines to the files:
+5. Then add these lines to the files:
+
 ```js
 // .env.development
-PGDATABASE=nc_games
+PGDATABASE = nc_games;
 
 // .env.test
-PGDATABASE=nc_games_test
+PGDATABASE = nc_games_test;
 ```
 
 6. Seed the database by running these commands:
+
 ```shell
  $ npm run setup-dbs
  $ npm run seed
- ```
+```
 
- 7. Run tests via Jest with the following command:
+7. For testing, you'll need to install development dependencies:
+
+```shell
+$ npm install -D
+```
+
+8.  Run tests via Jest with the following command:
+
 ```shell
 $ npm test
 ```

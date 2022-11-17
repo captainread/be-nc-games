@@ -2,8 +2,9 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+
   "GET /api/categories": {
-    "description": "serves an array of all categories",
+    "description": "retrieves an array of all categories",
     "queries": [],
     "exampleResponse": {
       "categories": [
@@ -14,8 +15,9 @@
       ]
     }
   },
+
   "GET /api/reviews": {
-    "description": "serves an array of all reviews",
+    "description": "retrieves an array of all reviews",
     "queries": ["category", "sort_by", "order"],
     "exampleResponse": {
       "reviews": [
@@ -26,9 +28,112 @@
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
-          "votes": 5
+          "votes": 5,
+          "comment_count": 3
         }
       ]
     }
+  },
+
+  "GET /api/reviews/:review_id": {
+    "description": "retrieves a review object matching the given review_id",
+    "queries": ["N/A"],
+    "exampleResponse": {
+      "review": {
+        "review_id": 2,
+        "title": "Jenga",
+        "category": "dexterity",
+        "designer": "Leslie Scott",
+        "owner": "philippaclaire9",
+        "review_body": "Fiddly fun for all the family",
+        "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        "created_at": "2021-01-18T10:01:41.251Z",
+        "votes": 5,
+        "comment_count": 3
+      }
+    }
+  },
+
+  "GET /api/reviews/:review_id/comments": {
+    "description": "retrieves an array of comment objects associated with the given review",
+    "queries": ["N/A"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 6,
+          "body": "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
+          "review_id": 3,
+          "author": "philippaclaire9",
+          "votes": 10,
+          "created_at": "2021-03-27T19:49:48.110Z"
+        },
+        {
+          "comment_id": 3,
+          "body": "I didn't know dogs could play games",
+          "review_id": 3,
+          "author": "philippaclaire9",
+          "votes": 10,
+          "created_at": "2021-01-18T10:09:48.110Z"
+        }
+      ]
+    }
+  },
+
+  "GET /api/users": {
+    "description": "retrieves an array of user objects",
+    "queries": ["N/A"],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        },
+        {
+          "username": "philippaclaire9",
+          "name": "philippa",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        }
+      ]
+    }
+  },
+
+  "POST /api/reviews/:review_id/comments": {
+    "description": "posts a new comment to the given review, and returns the posted comment",
+    "queries": ["N/A"],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 7,
+        "body": "Wow, what an excellent coding test!",
+        "review_id": 4,
+        "author": "philippaclaire9",
+        "votes": 0,
+        "created_at": "2022-11-17T11:14:59.048Z"
+      }
+    }
+  },
+
+  "PATCH /api/reviews/:review_id": {
+    "description": "patches the votes for a given review, and returns the updated review",
+    "queries": ["N/A"],
+    "exampleResponse": {
+      "review": {
+        "review_id": 4,
+        "title": "Dolor reprehenderit",
+        "category": "social deduction",
+        "designer": "Gamey McGameface",
+        "owner": "mallionaire",
+        "review_body": "Consequat velit occaecat voluptate do.",
+        "review_img_url": "https://images.pexels.com/photos/278918/pexels-photo-278918.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "created_at": "2021-01-22T11:35:50.936Z",
+        "votes": 17
+      }
+    }
+  },
+
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the comment matching the given comment_id",
+    "queries": ["N/A"],
+    "exampleResponse": "N/A"
   }
 }

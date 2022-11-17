@@ -2,5 +2,5 @@ node_modules
 .env.*
 
 scraps.sql
-junk.js
+junk.*
 endpoints copy.json
