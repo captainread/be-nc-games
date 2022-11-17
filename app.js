@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
-
 const { getCategories } = require("./controllers/categories.controller");
+const { getUsers } = require("./controllers/users.controller");
+const { getEndpoints } = require("./controllers/endpoints.controller");
 const {
   getAllReviews,
   getReviewByID,
@@ -12,8 +13,6 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comments.controller");
-const { getUsers } = require("./controllers/users.controller");
-const { getEndpoints } = require("./controllers/endpoints.controller");
 
 app.use(express.json());
 
@@ -38,7 +37,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.all("*", (req, res) => {
+app.all("/*", (req, res) => {
   res.status(404).send({ msg: "404: Not Found" });
 });
 
