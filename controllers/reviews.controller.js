@@ -1,13 +1,14 @@
 const {
-  selectReviews,
+  selectAllReviews,
   selectReviewByID,
   selectCommentsByReviewID,
   insertComment,
   updateReviewVotes,
 } = require("../models/reviews.model");
 
-exports.getReviews = (req, res, next) => {
-  selectReviews()
+exports.getAllReviews = (req, res, next) => {
+  const { category, sort_by, order } = req.query;
+  selectAllReviews(category, sort_by, order)
     .then((review) => {
       res.status(200).send({ review });
     })
