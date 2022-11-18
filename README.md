@@ -9,7 +9,7 @@ The underlying database (themed around board game reviews) is made using **PSQL*
 
 To view the live version, please visit:
 
-> link goes here
+> https://captainread-nc-games.cyclic.app/
 
 ---
 
@@ -51,10 +51,10 @@ $ npm install
 
 ```js
 // .env.development
-PGDATABASE = nc_games;
+PGDATABASE = nc_games
 
 // .env.test
-PGDATABASE = nc_games_test;
+PGDATABASE = nc_games_test
 ```
 
 6. Seed the database by running these commands:

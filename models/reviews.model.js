@@ -24,7 +24,7 @@ exports.selectAllReviews = (
   }
 
   let queryStr =
-    "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id";
+    "SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id GROUP BY reviews.review_id";
 
   const queryVals = [];
 
@@ -35,7 +35,7 @@ exports.selectAllReviews = (
 
   queryStr += ` ORDER BY ${sort_by}`;
   queryStr += ` ${order}`;
-
+console.log(queryStr)
   return db
     .query(`SELECT * FROM categories`)
     .then((result) => {

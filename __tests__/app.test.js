@@ -4,6 +4,7 @@ const app = require("../app.js");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -594,23 +595,12 @@ describe("DELETE COMMENT AT /api/comments/:comment_id", () => {
 
 describe("GET ENDPOINTS JSON AT /api", () => {
   test("[Ticket 13] GET API ENDPOINTS (200): responds with JSON describing available endpoints", () => {
-    const JSONkeys = [
-      "GET /api",
-      "GET /api/categories",
-      "GET /api/reviews",
-      "GET /api/reviews/:review_id",
-      "GET /api/reviews/:review_id/comments",
-      "GET /api/users",
-      "POST /api/reviews/:review_id/comments",
-      "PATCH /api/reviews/:review_id",
-      "DELETE /api/comments/:comment_id",
-    ];
     return request(app)
       .get("/api")
       .expect(200)
       .then(({ body }) => {
         expect(body).toBeInstanceOf(Object);
-        expect(Object.keys(body)).toEqual(JSONkeys);
+        expect(body).toEqual(endpoints);
       });
   });
 });
