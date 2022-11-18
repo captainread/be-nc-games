@@ -1,3 +1,4 @@
+const e = require("express");
 const db = require("../db/connection");
 const { checkExists } = require("../utilities/utils");
 
@@ -36,6 +37,7 @@ exports.selectAllReviews = (
   queryStr += " GROUP BY reviews.review_id";
   queryStr += ` ORDER BY ${sort_by}`;
   queryStr += ` ${order}`;
+
   return db
     .query(`SELECT * FROM categories`)
     .then((result) => {
@@ -88,6 +90,50 @@ exports.updateReviewVotes = (review_id, patchContent) => {
       return db.query(queryStr, queryVals).then((result) => {
         return result.rows[0];
       });
+    });
+  }
+};
+
+exports.insertReview = (newReview) => {
+  if (
+    !Object.keys(newReview).includes(
+      "title",
+      "designer",
+      "owner",
+      "review_body",
+      "category"
+    ) ||
+    !newReview.title ||
+    !newReview.designer ||
+    !newReview.owner ||
+    !newReview.review_body ||
+    !newReview.category
+  ) {
+    return Promise.reject({ status: 400, msg: "400: Bad Request" });
+  } else {
+    return Promise.all([
+      checkExists("users", "username", newReview.owner),
+      checkExists("categories", "slug", newReview.category),
+    ]).then(() => {
+      let queryStr = `INSERT INTO reviews (title, designer, owner, review_body, category) VALUES ($1, $2, $3, $4, $5) RETURNING *;`;
+      const queryVals = [
+        newReview.title,
+        newReview.designer,
+        newReview.owner,
+        newReview.review_body,
+        newReview.category,
+      ];
+      return db
+        .query(queryStr, queryVals)
+        .then((result) => {
+          const generatedID = result.rows[0].review_id;
+          let queryStr =
+            "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments LEFT JOIN reviews ON reviews.review_id = comments.review_id WHERE comments.review_id = $1) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE reviews.review_id = $1";
+          return db.query(queryStr, [generatedID]);
+        })
+        .then((result2) => {
+          return result2.rows[0];
+        });
     });
   }
 };

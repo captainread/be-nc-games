@@ -2,6 +2,7 @@ const {
   selectAllReviews,
   selectReviewByID,
   updateReviewVotes,
+  insertReview,
 } = require("../models/reviews.model");
 
 exports.getAllReviews = (req, res, next) => {
@@ -30,6 +31,15 @@ exports.patchReviewVotes = (req, res, next) => {
   updateReviewVotes(review_id, patchContent)
     .then((review) => {
       res.status(200).send({ review });
+    })
+    .catch(next);
+};
+
+exports.postReview = (req, res, next) => {
+  const newReview = req.body;
+  insertReview(newReview)
+    .then((review) => {
+      res.status(201).send({ review });
     })
     .catch(next);
 };

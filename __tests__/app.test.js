@@ -344,7 +344,88 @@ describe("GET COMMENTS FROM /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe("POST TO /api/reviews/:review_id/comments", () => {
+describe("POST REVIEW TO /api/reviews", () => {
+  test("[Ticket 19] POST REVIEW (201): posts a review when request includes correct properties", () => {
+    const testReview = {
+      title: "Testy McTestGame",
+      designer: "John Smith",
+      owner: "mallionaire",
+      review_body: "A game too good for our current reality.",
+      category: "euro game",
+    };
+    const testResult = {
+      review_id: expect.any(Number),
+      title: "Testy McTestGame",
+      category: "euro game",
+      designer: "John Smith",
+      owner: "mallionaire",
+      review_body: "A game too good for our current reality.",
+      review_img_url:
+        "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+      created_at: expect.any(String),
+      votes: 0,
+      comment_count: 0
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(testReview)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject(testResult);
+      });
+  });
+
+  test("[Ticket 19] POST REVIEW (400): error handling for attempted review with insufficient data, e.g. missing fields", () => {
+    const testReview = {
+      title: "Testy McTestGame",
+      review_body: "A game too good for our current reality.",
+      category: "euro game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(testReview)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 19] POST REVIEW (400): error handling for attempted review with insufficient data, e.g. empty strings", () => {
+    const testReview = {
+      title: "",
+      designer: "John Smith",
+      owner: "mallionaire",
+      review_body: "A game too good for our current reality.",
+      category: "",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(testReview)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 19] POST REVIEW (404): error handling for attempted review by non-existent owner/user", () => {
+    const testReview = {
+      title: "Testy McTestGame",
+      designer: "John Smith",
+      owner: "ghosty-toasty",
+      review_body: "A game too good for our current reality.",
+      category: "euro game",
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(testReview)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+});
+
+describe("POST COMMENT TO /api/reviews/:review_id/comments", () => {
   test("[Ticket 7] POST COMMENT (201): posts a comment (attached to given review_id) when request includes username and body", () => {
     const testComment = {
       username: "philippaclaire9",
