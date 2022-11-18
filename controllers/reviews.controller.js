@@ -15,7 +15,7 @@ exports.getAllReviews = (req, res, next) => {
 
 exports.getReviewByID = (req, res, next) => {
   const review_id = req.params.review_id;
-  console.log(review_id)
+
   selectReviewByID(review_id)
     .then((review) => {
       res.status(200).send({ review });
