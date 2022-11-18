@@ -439,7 +439,7 @@ describe("POST TO /api/reviews/:review_id/comments", () => {
   });
 });
 
-describe("PATCH VOTES AT /api/reviews/:review_id", () => {
+describe("PATCH REVIEW VOTES AT /api/reviews/:review_id", () => {
   test("[Ticket 8] PATCH VOTES FOR REVIEW (200): *increases* the vote count for a valid review (when request includes inc_votes) and returns the updated review.", () => {
     const patchedReview4 = {
       review_id: expect.any(Number),
@@ -617,6 +617,99 @@ describe("DELETE COMMENT AT /api/comments/:comment_id", () => {
   test("[Ticket 12] DELETE COMMENT (404): error handling for attempted delete of non-existent comment_id", () => {
     return request(app)
       .del("/api/comments/666")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
+      });
+  });
+});
+
+describe("PATCH COMMENT VOTES AT /api/comments/:comment_id", () => {
+  test("[Ticket 18] PATCH VOTES FOR COMMENT (200): *increases* the vote count for a valid comment (when request includes inc_votes) and returns the updated comment", () => {
+    const patchedComment2 = {
+      comment_id: 2,
+      body: "My dog loved this game too!",
+      review_id: 3,
+      author: "mallionaire",
+      votes: 23,
+      created_at: "2021-01-18T10:09:05.410Z",
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment.votes).toBe(23);
+        expect(body.comment).toMatchObject(patchedComment2);
+      });
+  });
+
+  test("[Ticket 18] PATCH VOTES FOR COMMENT (200): *decreases* the vote count for a valid comment (when request includes inc_votes) and returns the updated comment", () => {
+    const patchedComment2 = {
+      body: "My dog loved this game too!",
+      review_id: 3,
+      author: "mallionaire",
+      votes: 3,
+      created_at: "2021-01-18T10:09:05.410Z",
+    };
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment.votes).toBe(3);
+        expect(body.comment).toMatchObject(patchedComment2);
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR COMMENT (400): error handling for attempted vote patch with insufficient data, e.g. empty object/no inc_votes", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR COMMENT (400): error handling for attempted vote patch with invalid data, e.g. invalid inc_votes value", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: "ten cheeky little votes!" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR COMMENT (400): error handling for attempted vote patch with invalid data, e.g. unecessary fields", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({
+        inc_votes: 10,
+        otherNonsense: "wots this doin here?",
+        badStuff: true,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR COMMENT (400): error handling for attempted vote patch with invalid comment_id, e.g. wrong data type", () => {
+    return request(app)
+      .patch("/api/comments/badID")
+      .send({ inc_votes: 10 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: Bad Request");
+      });
+  });
+
+  test("[Ticket 8] PATCH VOTES FOR COMMENT (404): error handling for attempted vote patch for non-existent comment_id", () => {
+    return request(app)
+      .patch("/api/comments/999")
+      .send({ inc_votes: 10 })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("404: Not Found");
