@@ -1,4 +1,7 @@
-const { postComment } = require("../controllers/comments.controller");
+const {
+  postComment,
+  getCommentsByReviewID,
+} = require("../controllers/comments.controller");
 const {
   getAllReviews,
   getReviewByID,
@@ -11,7 +14,9 @@ reviewsRouter.route("/").get(getAllReviews);
 
 reviewsRouter.route("/:review_id").get(getReviewByID).patch(patchReviewVotes);
 
-reviewsRouter.route("/:review_id/comments").post(postComment)
-
+reviewsRouter
+  .route("/:review_id/comments")
+  .get(getCommentsByReviewID)
+  .post(postComment);
 
 module.exports = reviewsRouter;
