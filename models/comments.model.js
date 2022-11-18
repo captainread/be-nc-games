@@ -2,6 +2,7 @@ const db = require("../db/connection");
 const { checkExists } = require("../utilities/utils");
 
 exports.selectCommentsByReviewID = (review_id) => {
+  console.log("here!")
   if (isNaN(review_id)) {
     return Promise.reject({ status: 400, msg: "400: Bad Request" });
   } else {

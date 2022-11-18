@@ -24,7 +24,7 @@ exports.selectAllReviews = (
   }
 
   let queryStr =
-    "SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id GROUP BY reviews.review_id";
+    "SELECT reviews.*, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id";
 
   const queryVals = [];
 
@@ -32,10 +32,11 @@ exports.selectAllReviews = (
     queryVals.push(category);
     queryStr += " WHERE category = $1";
   }
-
+  
+  queryStr += " GROUP BY reviews.review_id";
   queryStr += ` ORDER BY ${sort_by}`;
   queryStr += ` ${order}`;
-console.log(queryStr)
+
   return db
     .query(`SELECT * FROM categories`)
     .then((result) => {
@@ -55,13 +56,17 @@ console.log(queryStr)
 };
 
 exports.selectReviewByID = (review_id) => {
+  console.log("you made it")
   if (isNaN(review_id)) {
+    console.log("got here", review_id)
     return Promise.reject({ status: 400, msg: "400: Bad Request" });
   } else {
     return checkExists("reviews", "review_id", review_id)
       .then(() => {
+        console.log("yea boi")
         let queryStr =
           "SELECT reviews.*, (SELECT COUNT(*)::int FROM comments LEFT JOIN reviews ON reviews.review_id = comments.review_id WHERE comments.review_id = $1) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE reviews.review_id = $1";
+          console.log(queryStr)
         return db.query(queryStr, [review_id]);
       })
       .then((result) => {

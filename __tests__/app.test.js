@@ -21,7 +21,7 @@ describe("ERROR DUE TO /invalid-route", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(
-          "404: Not Found. Please ensure you are interacting with a valid endpoint."
+          "404: Not Found"
         );
       });
   });
@@ -80,7 +80,7 @@ describe("GET ALL REVIEWS FROM /api/reviews", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.review)).toEqual(true);
         expect(body.review.length).toBeGreaterThan(0);
-        expect(body.review.length).toBe(3);
+        expect(body.review.length).toBe(1);
         body.review.forEach((review) => {
           expect(review.category).toEqual("dexterity");
         });
@@ -119,7 +119,7 @@ describe("GET ALL REVIEWS FROM /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.review)).toEqual(true);
-        expect(body.review.length).toBe(3);
+        expect(body.review.length).toBe(1);
         expect(body.review).toBeSortedBy("comment_count", {
           descending: false,
         });
