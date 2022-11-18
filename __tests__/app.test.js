@@ -20,9 +20,7 @@ describe("ERROR DUE TO /invalid-route", () => {
       .get("/bad-route")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(
-          "404: Not Found"
-        );
+        expect(body.msg).toBe("404: Not Found");
       });
   });
 });
@@ -560,6 +558,39 @@ describe("GET USERS FROM /api/users", () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET USERS FROM /api/users/:username", () => {
+  test("[Ticket 17] GET USER (200): responds with one matched user object with correct properties", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then(({ body }) => {
+        const userObj = {
+          username: expect.any(String),
+          avatar_url: expect.any(String),
+          name: expect.any(String),
+        };
+        const userObjMallionaire = {
+          username: "mallionaire",
+          name: "haz",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        };
+        expect(body.user).toBeInstanceOf(Object);
+        expect(body.user).toMatchObject(userObj);
+        expect(body.user).toMatchObject(userObjMallionaire);
+      });
+  });
+
+  test("[Ticket 17] GET USER (404): error handling for non-existent username", () => {
+    return request(app)
+      .get("/api/users/6547456")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("404: Not Found");
       });
   });
 });
