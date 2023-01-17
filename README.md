@@ -4,14 +4,13 @@
 
 This project mimics the structure of a real-world backend service which provides information to frontend architecture.
 The underlying database (themed around board game reviews) is made using **PSQL** and interacted with via **node-postgres**.
+Testing was performed using [Jest](https://jestjs.io/).
 
 ### Hosted API
 
 To view the live version, please visit:
 
-> https://captainread-nc-games.cyclic.app/
-
----
+> https://dicefactor.cyclic.app/api
 
 ## Local instructions
 
@@ -29,7 +28,7 @@ In order to run this project locally, please follow the instructions below.
 1. Clone the repository from GitHub:
 
 ```shell
-$ git clone https://github.com/captainread/nc-games.git
+$ git clone https://github.com/captainread/be-nc-games.git
 ```
 
 2. Navigate to / open the repo.
@@ -51,10 +50,10 @@ $ npm install
 
 ```js
 // .env.development
-PGDATABASE = nc_games
+PGDATABASE = nc_games;
 
 // .env.test
-PGDATABASE = nc_games_test
+PGDATABASE = nc_games_test;
 ```
 
 6. Seed the database by running these commands:
